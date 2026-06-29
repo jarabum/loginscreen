@@ -48,15 +48,4 @@ app.post("/login", async (req, res) => {
   return res.status(400).send({ message: "wrong name or password :(" });
 })
 
-//app.post("/dalsi/:id", (req, res) => {
-//const { id } = req.params;
-//const { data } = req.body;
-
-//if (!data) {
-//res.status(400).send({ message: "are you mad :(" });
-//}
-
-//res.send({ zprava: `id je ${id} data je ${data}` });
-//});
-
 app.listen(PORT, () => { console.log(`server started on port: ${PORT}`) })
