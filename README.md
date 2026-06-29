@@ -21,18 +21,43 @@ A simple sign-up / login system with a vanilla JavaScript frontend, an Express.j
 ### Prerequisites
  
 - [Node.js](https://nodejs.org/) (v18+ recommended)
+
 ### Backend Setup
  
 ```bash
-npm install
-node index.js
+npm install # Install dependencies
+node index.js # Run the server
 ```
  
-The server starts on `http://localhost:8080` (or the port set via the `PORT` environment variable). The `users` table is created automatically on startup if it doesn't already exist (see `db.js`).
- 
+The server starts on `http://localhost:8080` (or the port set via the `PORT` environment variable). The `users` table is created automatically on startup if it doesnt already exist (see `db.js`).
+
+### Backend Setup as a Docker container
+You can also set up the backend so its a `Docker` container. You can use the `Dockerfile` that is included in the backend folder.
+
+```bash
+cd backend/ # Go to backend directory
+docker build -t backend_image . # Build the image
+```
+
+Then you have to run the container.
+
+```bash
+docker run -d -t -p 8080:8080 --name backend backend_image # Run the container
+```
+
+But after stopping the container no data will be saved so you have to save the data by creating a `volume`
+
+```bash
+docker stop backend # Stop the container when its running
+docker rm backend # Remove the container
+
+docker volume create backend-data # Create the volume
+docker run -d -t -p 8080:8080 -v backend-data:/app --name backend backend_image # Create a new backend container that saves its data into the volume.
+```
+
 ### Frontend Setup
  
-Open `index.html` in a browser, or serve it with a local dev server (e.g. VS Code's Live Server extension). The `api` constant in `script.js` should point to your backend:
+Open `index.html` in a browser or serve it with a local dev server (e.g. VS Code Live Server extension). The `api` constant in `script.js` should point to your backend:
  
 ```javascript
 const api = "http://localhost:8080";
@@ -47,7 +72,7 @@ CREATE TABLE IF NOT EXISTS users (
 )
 ```
  
-Passwords are stored as bcrypt hashes, never in plain text.
+Passwords are stored as bcrypt hashes never in plain text.
  
 ## API Endpoints
  
@@ -85,10 +110,10 @@ curl -X POST http://localhost:8080/login \
  
 - **Sign up** — `name` / `password` inputs, calls `signUp()` in `script.js`
 - **Login** — `name2` / `password2` inputs, calls `login()` in `script.js`
-Both functions `fetch` the corresponding backend route and display the server's response message in the `#information` / `#information2` paragraph.
+Both functions `fetch` the corresponding backend route and display the servers response message in the `#information` / `#information2` paragraph.
  
 ## Known Limitations / TODO
  
-- No session/token handling — `/login` just confirms credentials are correct but doesn't issue a session, JWT, or cookie, so the frontend has no way to know "who" is logged in afterward.
-- No input validation/sanitization beyond checking that fields aren't empty (e.g. no length limits, no password strength requirements).
-- No HTTPS — fine for local dev, but credentials would be sent in plain text over a real network.
+- No session/token handling — `/login` just confirms credentials are correct but doesnt issue a session, JWT, or cookie, so the frontend has no way to know "who" is logged in afterward.
+- No input validation/sanitization beyond checking that fields arent empty (e.g. no length limits, no password strength requirements).
+- No HTTPS — fine for local dev but credentials would be sent in plain text over a real network.
